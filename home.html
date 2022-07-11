@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" oncontextmenu="return false">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOME</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+  </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">NFC Check</a>
+       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">MTC GRAB.Ltd <span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item mx-1">
+                  <a id="userlink" class="nav-link" >Username</a>
+                </li>
+                <li class="nav-item mx-1">
+                    <a id="signoutlink" class="nav-link" >Se deconnecter</a>
+                  </li> 
+              </ul>
+              </form>
+        </div>
+      </nav>
+      
+      <div class="container">
+          <h3 class="title" id="hh"></h3>
+        <img src="logo.png" alt="MTC GRAB" class="pic">
+        <div class="wrapper animated bounceInLeft">
+          <div class="contact">
+            <h3 class="contact-us">Register Trip</h3>
+            <div class="alert">THANK YOU! Votre voyage est Enregistrer avec success!<br>Merci d'utilisez MTC GRAB</div>
+            <form id="contactForm">
+              <p class="name-field">
+                <label>code du client<span>*</span> 
+                  
+                <input type="text" name="name" id="name"  readonly required>
+                
+              </p>
+              
+            </label>
+              <p class="company-field">
+                <label>Date<span>*</span>
+              <input type="date" id="date" name="date" class="form-control" value="{{formatDate invoice.date 'YYYY-MM-DD'}}" readonly required/>
+              </p>
+            </label>
+              <p class="email-field">
+                <label>Time<span>*</span>
+              <input type="time" id="time" name="time" class="form-control" value="{{formatDate invoice.date 'HH:mm'}}" readonly required/>
+              </p>
+            </label>
+            <p class="phone-field">
+              <label>code du chauffeur<span>*</span> 
+                  </select>
+              <input type="number" name="phone" id="phone"  placeholder="Inserez le code du chauffeur" required>
+            </p>
+          </label>
+              <p class="required-field">Required field <span>*</span></p>
+              <p class="submit-button">
+                <button type="submit" id="submit">Enregistrer</button>
+              </p>
+              
+            </form>
+          </div>
+        </div>
+      </div>
+      <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+      <script src="js.js"></script>
+        <script>
+
+        let userlink = document.getElementById('userlink');
+        let signoutlink = document.getElementById('signoutlink');
+        let header = document.getElementById('hh');
+        
+        var currentUser = null;
+
+//..................funcitons..................//
+
+
+        function getUsername(){
+            let keepLoggedIn = localStorage.getItem("keepLoggedIn");
+
+            if(keepLoggedIn == "yes"){
+                currentUser = JSON.parse(localStorage.getItem('user'));
+            }
+
+            else{
+                currentUser = JSON.parse(sessionStorage.getItem('user'));
+            }
+        }
+
+        function signout(){
+            sessionStorage.removeItem('user');
+            localStorage.removeItem('user');
+            localStorage.removeItem('keepLoggedIn');
+            window.location = "index.html";
+        }
+
+        window.onload = function(){
+            getUsername();
+            if(currentUser == null){
+                userlink.innerText="Create New Account";
+                userlink.classList.replace("nav-link","btn");
+                userlink.classList.add("btn-primary");
+                userlink.href = "register.html";
+
+                signoutlink.innerText="Login";
+                signoutlink.classList.replace("nav-link","btn");
+                signoutlink.classList.add("btn-success");
+                signoutlink.href = "index.html";
+            }
+            else{
+                userlink.innerText= currentUser.username;
+                header.innerText = "Bienvenue\n"+ currentUser.fullname +"\nEnregistrez votre voyage SVP!";
+                userlink.classList.replace("btn","nav-link");
+                userlink.classList.add("btn-primary");
+                userlink.href = "#";
+                 document.getElementById("name").value = currentUser.username;
+
+                signoutlink.innerText="Se deconnecter";
+                signoutlink.classList.replace("btn","nav-link");
+                signoutlink.classList.add("btn-success");
+                signoutlink.href = "javascript:signout()";
+
+
+            }
+        }
+        
+
+        
+      </script>
+</body>
+</html>
